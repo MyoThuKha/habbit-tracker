@@ -28,6 +28,10 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[300],
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {},
+        child: Icon(Icons.add_rounded),
+      ),
       body: ListView.builder(
         itemCount: task.length,
         itemBuilder: ((context, index) {

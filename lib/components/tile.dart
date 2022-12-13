@@ -13,8 +13,8 @@ class HabitTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.all(12),
-      padding: const EdgeInsets.all(8),
+      margin: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
           color: Colors.grey[100], borderRadius: BorderRadius.circular(12)),
       child: ListTile(
