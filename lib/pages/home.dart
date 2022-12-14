@@ -11,7 +11,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   bool checked = false;
 
-  void handleCheck(bool? val, index) {
+  void checkBoxTogggle(bool? val, index) {
     setState(() {
       task[index]["finished"] = val;
     });
@@ -35,6 +35,14 @@ class _HomePageState extends State<HomePage> {
       Navigator.pop(context);
       controller.clear();
     }
+  }
+
+  void editTask(int index) {}
+
+  void deleteTask(int index) {
+    setState(() {
+      task.removeAt(index);
+    });
   }
 
   Future showAddBox() {
@@ -91,10 +99,10 @@ class _HomePageState extends State<HomePage> {
         itemCount: task.length,
         itemBuilder: ((context, index) {
           return HabitTile(
-            text: task[index]["text"],
-            checked: task[index]["finished"],
-            handleCheck: ((value) => handleCheck(value, index)),
-          );
+              text: task[index]["text"],
+              checked: task[index]["finished"],
+              checkBoxToggle: ((value) => checkBoxTogggle(value, index)),
+              deleteTask: ((context) => deleteTask(index)));
         }),
       ),
     );
