@@ -19,7 +19,9 @@ class HabitTile extends StatelessWidget {
           color: Colors.grey[100], borderRadius: BorderRadius.circular(12)),
       child: ListTile(
         leading: Checkbox(
-          shape: const CircleBorder(),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(7),
+          ),
           value: checked,
           onChanged: handleCheck,
         ),

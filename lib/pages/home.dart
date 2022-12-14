@@ -24,13 +24,68 @@ class _HomePageState extends State<HomePage> {
     {"text": "sleep at 10pm", "finished": false},
   ];
 
+  TextEditingController controller = TextEditingController();
+
+  void addTask() {
+    setState(() {
+      task.insert(0, {"text": controller.text, "finished": false});
+    });
+  }
+
+  Future showAddBox() {
+    return showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("Add New Task"),
+          content: TextField(
+            controller: controller,
+            decoration: const InputDecoration(
+              hintText: "Abc...",
+            ),
+          ),
+          actions: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                      controller.clear();
+                    },
+                    child: const Text("Cancel")),
+                TextButton(
+                    onPressed: () {
+                      addTask();
+                      Navigator.pop(context);
+                      controller.clear();
+                    },
+                    child: const Text("Confirm")),
+              ],
+            ),
+          ],
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        );
+      },
+    );
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[300],
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
-        child: Icon(Icons.add_rounded),
+        onPressed: () {
+          showAddBox();
+        },
+        child: const Icon(Icons.add_rounded),
       ),
       body: ListView.builder(
         itemCount: task.length,
