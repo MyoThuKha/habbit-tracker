@@ -27,9 +27,14 @@ class _HomePageState extends State<HomePage> {
   TextEditingController controller = TextEditingController();
 
   void addTask() {
-    setState(() {
-      task.insert(0, {"text": controller.text, "finished": false});
-    });
+    if (controller.text != "") {
+      setState(() {
+        task.insert(0, {"text": controller.text, "finished": false});
+      });
+
+      Navigator.pop(context);
+      controller.clear();
+    }
   }
 
   Future showAddBox() {
@@ -53,14 +58,9 @@ class _HomePageState extends State<HomePage> {
                       Navigator.pop(context);
                       controller.clear();
                     },
-                    child: const Text("Cancel")),
+                    child: const Text("Discard")),
                 TextButton(
-                    onPressed: () {
-                      addTask();
-                      Navigator.pop(context);
-                      controller.clear();
-                    },
-                    child: const Text("Confirm")),
+                    onPressed: () => addTask(), child: const Text("Add")),
               ],
             ),
           ],
