@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:habit_tracker/components/create.dart';
 import 'package:habit_tracker/components/tile.dart';
+import 'package:habit_tracker/data/database.dart';
 import 'package:hive/hive.dart';
 
 class HomePage extends StatefulWidget {
@@ -11,47 +12,61 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  bool checked = false;
+  TextEditingController controller = TextEditingController();
+  final data = Hive.box('HABITS_DB');
+  HabitDB db = HabitDB();
+
+  @override
+  void initState() {
+    if (data.get('CURRENT_HABITS_LIST') == null) {
+      db.createInitData();
+    } else {
+      db.loadData();
+    }
+    db.update();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
 
   void checkBoxTogggle(bool? val, index) {
     setState(() {
-      task[index]["finished"] = val;
+      db.tasks[index]["finished"] = val;
     });
+    db.update();
   }
-
-  List<Map> task = [
-    {"text": "Meditate 10 min", "finished": false},
-    {"text": "Drink 1 glass of water", "finished": false},
-    {"text": "read docs", "finished": false},
-    {"text": "sleep at 10pm", "finished": false},
-  ];
-
-  TextEditingController controller = TextEditingController();
 
   void addTask() {
     if (controller.text != "") {
       setState(() {
-        task.insert(0, {"text": controller.text, "finished": false});
+        db.tasks.add({"text": controller.text, "finished": false});
       });
     }
-    Navigator.pop(context);
     controller.clear();
+    Navigator.pop(context);
+    db.update();
   }
 
   void editTask(int index) {
     if (controller.text != "") {
       setState(() {
-        task[index]['text'] = controller.text;
+        db.tasks[index]['text'] = controller.text;
       });
     }
-    Navigator.pop(context);
     controller.clear();
+    Navigator.pop(context);
+    db.update();
   }
 
   void deleteTask(int index) {
     setState(() {
-      task.removeAt(index);
+      db.tasks.removeAt(index);
     });
+    db.update();
   }
 
   Future showDialogBox(String text, int index) {
@@ -68,19 +83,6 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  final data = Hive.box('HABITS_DB');
-
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    controller.dispose();
-    super.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -90,15 +92,15 @@ class _HomePageState extends State<HomePage> {
         child: const Icon(Icons.add_rounded),
       ),
       body: ListView.builder(
-        itemCount: task.length,
+        itemCount: db.tasks.length,
         itemBuilder: ((context, index) {
           return HabitTile(
-            text: task[index]["text"],
-            checked: task[index]["finished"],
+            text: db.tasks[index]["text"],
+            checked: db.tasks[index]["finished"],
             checkBoxToggle: ((value) => checkBoxTogggle(value, index)),
             deleteTask: ((context) => deleteTask(index)),
             showDialogBox: (context) =>
-                showDialogBox(task[index]["text"], index),
+                showDialogBox(db.tasks[index]["text"], index),
           );
         }),
       ),
