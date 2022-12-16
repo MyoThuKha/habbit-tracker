@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:habit_tracker/components/create.dart';
 import 'package:habit_tracker/components/tile.dart';
+import 'package:hive/hive.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -31,7 +33,6 @@ class _HomePageState extends State<HomePage> {
       setState(() {
         task.insert(0, {"text": controller.text, "finished": false});
       });
-
       Navigator.pop(context);
       controller.clear();
     }
@@ -49,34 +50,19 @@ class _HomePageState extends State<HomePage> {
     return showDialog(
       context: context,
       builder: (context) {
-        return AlertDialog(
-          title: const Text("Add New Task"),
-          content: TextField(
-            controller: controller,
-            decoration: const InputDecoration(
-              hintText: "Abc...",
-            ),
-          ),
-          actions: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                TextButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                      controller.clear();
-                    },
-                    child: const Text("Discard")),
-                TextButton(
-                    onPressed: () => addTask(), child: const Text("Add")),
-              ],
-            ),
-          ],
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        return CreateHabit(
+          controller: controller,
+          addTask: addTask,
         );
       },
     );
+  }
+
+  final data = Hive.box('HABITS_DB');
+
+  @override
+  void initState() {
+    super.initState();
   }
 
   @override
@@ -90,9 +76,7 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       backgroundColor: Colors.grey[300],
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          showAddBox();
-        },
+        onPressed: () => showAddBox(),
         child: const Icon(Icons.add_rounded),
       ),
       body: ListView.builder(
