@@ -33,10 +33,11 @@ class HabitDB {
   void update() {
     _box.put(todayDate(), tasks);
     _box.put('CURRENT_HABITS_LIST', tasks);
+    calculatePercent();
+    loadHeatMap();
   }
 
   //Heat Map
-
   void calculatePercent() {
     int completed = 0;
     for (int i = 0; i < tasks.length; i++) {
@@ -50,8 +51,7 @@ class HabitDB {
   }
 
   void loadHeatMap() {
-    DateTime start = _box.get('START_DATE');
-
+    DateTime start = changeToDateTime(_box.get('START_DATE'));
     int daysbetween = DateTime.now().difference(start).inDays;
 
     // go from start date to today and add each percentage to the dataset
