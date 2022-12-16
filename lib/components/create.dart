@@ -3,13 +3,22 @@ import "package:flutter/material.dart";
 class CreateHabit extends StatelessWidget {
   final TextEditingController controller;
   final VoidCallback addTask;
-  const CreateHabit(
-      {super.key, required this.controller, required this.addTask});
+  final VoidCallback editTask;
+  final String initialText;
+  const CreateHabit({
+    super.key,
+    required this.controller,
+    required this.addTask,
+    required this.initialText,
+    required this.editTask,
+  });
 
   @override
   Widget build(BuildContext context) {
+    final String title = initialText == "" ? "Add New Task" : "Edit Task";
+    controller.text = initialText;
     return AlertDialog(
-      title: const Text("Add New Task"),
+      title: Text(title),
       content: TextField(
         controller: controller,
         decoration: const InputDecoration(
@@ -21,12 +30,21 @@ class CreateHabit extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             TextButton(
+              onPressed: () => {
+                controller.clear(),
+                Navigator.pop(context),
+              },
+              child: const Text("Discard"),
+            ),
+            TextButton(
                 onPressed: () {
-                  Navigator.pop(context);
-                  controller.clear();
+                  if (initialText == "") {
+                    addTask();
+                  } else {
+                    editTask();
+                  }
                 },
-                child: const Text("Discard")),
-            TextButton(onPressed: () => addTask(), child: const Text("Add")),
+                child: const Text("Done")),
           ],
         ),
       ],

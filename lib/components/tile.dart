@@ -6,12 +6,14 @@ class HabitTile extends StatelessWidget {
   final String text;
   final bool checked;
   final void Function(bool?) checkBoxToggle;
+  final Function(BuildContext)? showDialogBox;
   final Function(BuildContext)? deleteTask;
   const HabitTile({
     super.key,
     required this.text,
     required this.checked,
     required this.checkBoxToggle,
+    required this.showDialogBox,
     required this.deleteTask,
   });
 
@@ -24,7 +26,7 @@ class HabitTile extends StatelessWidget {
           motion: const DrawerMotion(),
           children: [
             SlidableAction(
-              onPressed: (context) {},
+              onPressed: showDialogBox,
               borderRadius: BorderRadius.circular(12),
               icon: CupertinoIcons.pen,
               backgroundColor: Colors.blue,

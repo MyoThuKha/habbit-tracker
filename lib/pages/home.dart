@@ -33,12 +33,20 @@ class _HomePageState extends State<HomePage> {
       setState(() {
         task.insert(0, {"text": controller.text, "finished": false});
       });
-      Navigator.pop(context);
-      controller.clear();
     }
+    Navigator.pop(context);
+    controller.clear();
   }
 
-  void editTask(int index) {}
+  void editTask(int index) {
+    if (controller.text != "") {
+      setState(() {
+        task[index]['text'] = controller.text;
+      });
+    }
+    Navigator.pop(context);
+    controller.clear();
+  }
 
   void deleteTask(int index) {
     setState(() {
@@ -46,13 +54,15 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  Future showAddBox() {
+  Future showDialogBox(String text, int index) {
     return showDialog(
       context: context,
       builder: (context) {
         return CreateHabit(
           controller: controller,
+          initialText: text,
           addTask: addTask,
+          editTask: () => {editTask(index)},
         );
       },
     );
@@ -76,17 +86,20 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       backgroundColor: Colors.grey[300],
       floatingActionButton: FloatingActionButton(
-        onPressed: () => showAddBox(),
+        onPressed: () => showDialogBox("", 0),
         child: const Icon(Icons.add_rounded),
       ),
       body: ListView.builder(
         itemCount: task.length,
         itemBuilder: ((context, index) {
           return HabitTile(
-              text: task[index]["text"],
-              checked: task[index]["finished"],
-              checkBoxToggle: ((value) => checkBoxTogggle(value, index)),
-              deleteTask: ((context) => deleteTask(index)));
+            text: task[index]["text"],
+            checked: task[index]["finished"],
+            checkBoxToggle: ((value) => checkBoxTogggle(value, index)),
+            deleteTask: ((context) => deleteTask(index)),
+            showDialogBox: (context) =>
+                showDialogBox(task[index]["text"], index),
+          );
         }),
       ),
     );
