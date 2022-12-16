@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:habit_tracker/components/create.dart';
+import 'package:habit_tracker/components/summary.dart';
 import 'package:habit_tracker/components/tile.dart';
 import 'package:habit_tracker/data/database.dart';
 import 'package:hive/hive.dart';
@@ -91,18 +92,28 @@ class _HomePageState extends State<HomePage> {
         onPressed: () => showDialogBox("", 0),
         child: const Icon(Icons.add_rounded),
       ),
-      body: ListView.builder(
-        itemCount: db.tasks.length,
-        itemBuilder: ((context, index) {
-          return HabitTile(
-            text: db.tasks[index]["text"],
-            checked: db.tasks[index]["finished"],
-            checkBoxToggle: ((value) => checkBoxTogggle(value, index)),
-            deleteTask: ((context) => deleteTask(index)),
-            showDialogBox: (context) =>
-                showDialogBox(db.tasks[index]["text"], index),
-          );
-        }),
+      body: ListView(
+        children: [
+          Summary(
+            startDate: data.get('START_DATE'),
+            datasets: db.heatMapDataSet,
+          ),
+          ListView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: db.tasks.length,
+            itemBuilder: ((context, index) {
+              return HabitTile(
+                text: db.tasks[index]["text"],
+                checked: db.tasks[index]["finished"],
+                checkBoxToggle: ((value) => checkBoxTogggle(value, index)),
+                deleteTask: ((context) => deleteTask(index)),
+                showDialogBox: (context) =>
+                    showDialogBox(db.tasks[index]["text"], index),
+              );
+            }),
+          ),
+        ],
       ),
     );
   }
